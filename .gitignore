@@ -7,3 +7,7 @@ pyvenv.cfg
 # editor temp files
 *.swp
 *~
+
+# Python temp files
+__pycache__
+*.egg-info
