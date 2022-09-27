@@ -135,6 +135,26 @@ async def get_client(
 	)
 
 
+def get_name(
+	client: fair_research_login.NativeClient
+) -> str:
+	"""Return the name of the person who authenticated.
+
+	:param client: The native client.
+
+	:returns: The name (as a 'display name').
+	"""
+
+	# We'll need a Globus Auth client for this.
+	auth_client = globus_sdk.AuthClient(
+		authorizer=client.get_authorizers_by_scope()['openid']
+	)
+
+	# Get the userinfo, and return a name
+	user_info = auth_client.oauth2_userinfo()
+	return user_info['name']
+
+
 def needs_login(
 	client: fair_research_login.NativeClient,
 ) -> bool:
