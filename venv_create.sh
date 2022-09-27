@@ -1,6 +1,6 @@
 #/bin/sh
 #-*- coding: utf-8 -*-
-#vim: ts=4 sw=4 noet
+# vim: ts=4 sw=4 noet
 
 # © 2022 The Board of Trustees of the Leland Stanford Junior University
 
