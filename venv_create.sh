@@ -1,4 +1,4 @@
-#/bin/sh
+#/bin/bash
 # -*- coding: utf-8 -*-
 # vim: ts=4 sw=4 noet
 
@@ -18,6 +18,13 @@ set -e
 # Make the venv
 echo "Creating venv with Python ${PYTHON}"
 $PYTHON -m venv .
+
+# Check if we are using modules.  If yes, then purge the environment.
+# (We might have needed a Python module to get the venv working.)
+if [ $(declare -F | grep -c module) -gt 0 ]; then
+	echo "Unloading any modules."
+	module purge
+fi
 
 # Everything after this uses the local venv.
 
