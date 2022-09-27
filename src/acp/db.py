@@ -36,7 +36,7 @@ APPLICATION_ID = 1633906688
 
 
 # Memoized function to get the DB path
-@functools.cache
+@functools.lru_cache
 def db_path() -> pathlib.Path:
 	"""Get the database path.
 
