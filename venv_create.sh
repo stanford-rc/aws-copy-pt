@@ -6,10 +6,11 @@
 
 # This script sets up a venv in the project directory.
 
-# Set this to be the specific Python version you want.  If the Python
-# executable is in your $PATH, then you just need the name; otherwise you might
-# need the absolute path.
-PYTHON=python3.10
+# Set this to be the specific Python version you want; or, if $PYTHON is
+# already defined in the environment, use that.  If the Python executable is in
+# your $PATH, then you just need the name; otherwise you might need the
+# absolute path.
+PYTHON=${PYTHON:-python3.10}
 
 # Make the venv
 echo "Creating venv with Python ${PYTHON}"
