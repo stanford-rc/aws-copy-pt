@@ -12,6 +12,9 @@
 # absolute path.
 PYTHON=${PYTHON:-python3.10}
 
+# Exit immediately on command errors
+set -e
+
 # Make the venv
 echo "Creating venv with Python ${PYTHON}"
 $PYTHON -m venv .
