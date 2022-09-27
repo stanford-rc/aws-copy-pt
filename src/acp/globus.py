@@ -36,6 +36,13 @@ from acp.logging import *
 # This is the OAuth client ID for our Globus Native App
 GLOBUS_CLIENT_ID = 'f584c7eb-818e-4374-9cbb-037456973b9c'
 
+# These are the Globus scopes that we need
+REQUIRED_SCOPES = (
+	'openid',
+	'profile',
+	'urn:globus:auth:scope:transfer.api.globus.org:all',
+)
+
 
 # First, make a class to provide for token storage, using our DB
 class TokenStorage:
@@ -123,9 +130,7 @@ async def get_client(
 	return fair_research_login.NativeClient(
 		client_id = GLOBUS_CLIENT_ID,
 		app_name = 'AWS S3 Copy post-transfer',
-		default_scopes = (
-			'profile',
-		),
+		default_scopes = REQUIRED_SCOPES,
 		token_storage = token_storage,
 	)
 
