@@ -86,6 +86,9 @@ async def _main():
 				print('An error occurred.  Please try again later.')
 				sys.exit(1)
 
+	# Say hello
+	print('Hello ' + acp.globus.get_name(g))
+
 
 # Our actual main!
 def main() -> NoReturn:
