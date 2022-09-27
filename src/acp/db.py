@@ -72,6 +72,7 @@ def db_path() -> pathlib.Path:
 			debug(f"Expanded ACP_DB_HOME to {pathdir}")
 
 	# If that doesn't exist, check for XDG_DATA_HOME
+	# (See the XDG Base Directory Specification)
 	elif 'XDG_DATA_HOME' in os.environ:
 		pathdir = pathlib.Path(os.environ('XDG_DATA_HOME')) / 'acp'
 		debug(f"Using XDG_DATA_HOME: {pathdir}")
@@ -81,8 +82,11 @@ def db_path() -> pathlib.Path:
 		pathdir = pathlib.Path(os.environ['HOME']) / '.local' / 'share' / 'acp'
 		debug(f"Using HOME: {pathdir}")
 
-	# If _that_ doesn't exist, then resolve our homedir, and build a path
+	# If _that_ doesn't exist, then resolve our homedir, and build a path.
+	# NOTE: This is a very weird situation, and should be warned about.
+	# $HOME is required per POSIX.1-2017 Section 8.3.
 	else:
+		warning('Your environment is not setting the $HOME environment variable.')
 		pathdir = pathlib.Path.home() / '.local' / 'share' / 'acp'
 		debug(f"Auto-detecting home: {pathdir}")
 
