@@ -52,6 +52,9 @@ async def _main():
 		print('Globus credentials are either missing or expired.')
 		print('A fresh Globus login is required.')
 
+		# Make sure all existing credentials are expired.
+		g.logout()
+
 		# If we're not interactive, then we can't continue.
 		if not is_interactive:
 			print('This requires an interactive session in order to proceed.')
