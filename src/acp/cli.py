@@ -71,11 +71,15 @@ async def _main():
 
 		# In the last case, we'll give the user a URL to visit.
 		else:
-			g.login(
-				no_local_server = True,
-				no_browser = True,
-				refresh_tokens = True,
-			)
+			try:
+				g.login(
+					no_local_server = True,
+					no_browser = True,
+					refresh_tokens = True,
+				)
+			except Exception:
+				print('An error occurred.  Please try again later.')
+				sys.exit(1)
 
 
 # Our actual main!
