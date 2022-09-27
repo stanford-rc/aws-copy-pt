@@ -1,0 +1,9 @@
+# venv stuff
+bin
+include
+lib
+pyvenv.cfg
+
+# editor temp files
+*.swp
+*~
