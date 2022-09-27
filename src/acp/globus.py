@@ -145,7 +145,21 @@ def needs_login(
 	debug('Trying to load tokens')
 	try:
 		client.load_tokens()
-		result = False
+
+		# Check for all of our scopes
+		all_scopes_found = True
+		authorizers_by_scope = client.get_authorizers_by_scope()
+		for scope in REQUIRED_SCOPES:
+			if scope not in authorizers_by_scope:
+				all_scopes_found = False
+
+		# If we missed any scopes, then we need login.
+		if not all_scopes_found:
+			result = True
+		else:
+			result = False
+
+	# If we had a problem loading/refreshing any tokens, then we need login.
 	except fair_research_login.LoadError:
 		result = True
 
