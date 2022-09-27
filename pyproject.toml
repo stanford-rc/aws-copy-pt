@@ -1,0 +1,104 @@
+# -*- coding: utf-8 -*-
+# vim: ts=4 sw=4 noet
+
+# Start by describing how the package is built.
+
+# Build using setuptools & wheel.
+# NOTE: Setuptools support for pyproject.toml began in version 61.0.0.
+# Support for editable installs came in version 64.0.0.
+[build-system]
+requires = [
+	"setuptools >= 65.4.0",
+	"wheel >= 0.37.1",
+]
+build-backend = "setuptools.build_meta"
+
+# Next, put in the project metadata!
+
+[project]
+
+# Name and version (which supports using `file:`)
+name = "aws-copy-posttransfer"
+version = "0.0.1"
+
+# The authors list has its own table, so it has to come later…
+
+# The long_description is now `readme`, and takes a path by default.
+# The license can also be specified as a file path.
+description = "Pseudo cross-account AWS S3 transfers with Globus"
+readme = "README.rst"
+license = { "file" = "LICENSE" }
+
+# Classifiers is a typical array
+classifiers = [
+	"Development Status :: 2 - Pre-Alpha",
+	"Environment :: Console",
+	"Intended Audience :: System Administrators",
+	"License :: OSI Approved :: GNU Affero General Public License v3",
+	"License :: OSI Approved :: GNU Free Documentation License (FDL)",
+	"Natural Language :: English",
+	"Operating System :: OS Independent",
+	"Programming Language :: Python :: 3 :: Only",
+	"Programming Language :: Python :: 3.8",
+	"Topic :: Office/Business",
+	"Typing :: Typed",
+]
+
+# URLs is its own table, so it has to come later…
+
+# Next up are our dependencies, in this order:
+
+# 1: Python
+requires-python = "<4.0, >=3.10"
+
+# 2: Required dependencies.
+dependencies = [
+	"aioboto3 <11, >=10.1.0",
+	"aiosqlite <1.0, >=0.17.0",
+	"coloredlogs <16.0, >=15.0.1",
+	"fair-research-login <1.0, >=0.3.0",
+	"globus-sdk <4.0, >=3.12.0",
+]
+
+# 3: Optional dependencies.
+[project.optional-dependencies]
+
+# The `build` option adds the tooling for building distributions.
+build = [
+	"build",
+]
+
+# The `docs` option adds support for building docs.
+docs = [
+	"sphinx <5.0, >=4.5.0",
+	"sphinx-rtd-theme",
+]
+
+# Before we move on, finish up the project metadata tables…
+
+# Each author gets its own [[project.authors]] block
+[[project.authors]]
+"name" = "A. Karl Kornel"
+"email" = "akkornel@stanford.edu"
+
+# URLs is a table, just like before.
+[project.urls]
+	"Homepage" = "https://github.com/stanford-rc/aws-copy-pt"
+	"Bug Tracker" = "https://github.com/stanford-rc/aws-copy-pt/issues"
+	"Source Code" = "https://github.com/stanford-rc/aws-copy-pt/tree/main1"
+	"Documentation" = "https://stanford-rc.github.io/aws-copy-pt/"
+
+# Define the packages we install, and where to find them.
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["acp"]
+
+# There are data files which need to be included in the package.
+# But NOTE: include-package-data is now True by default!
+# So, as long as it's specified in MANIFEST.in, it should be included.
+
+# Define our CLI commands
+
+[project.scripts]
+aws-copy-pt = "acp.cli:main"
