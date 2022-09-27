@@ -36,3 +36,10 @@ echo "Installing/Upgrading pip & wheel"
 # Run the setup program, in user-editable (or "dev") mode.
 echo "Running pip install (editable mode)"
 ./bin/python -m pip install -e .
+
+# If we're running in a module, warn the user to unload Python
+# before continuing.
+if [ $(declare -F | grep -c module) -gt 0 ]; then
+	echo "WARNING: Before you continue, unload the Python module."
+fi
+echo "Installation complete!  You may now activate your venv."
