@@ -23,11 +23,13 @@ from __future__ import annotations
 
 import aiosqlite
 import asyncio
+import dataclasses
 import fair_research_login
 import globus_sdk
 import json
 import sqlite3
 from typing import Any
+import uuid
 
 import acp.db
 from acp.logging import *
@@ -109,6 +111,15 @@ INSERT OR REPLACE INTO cred_globus (key, json) VALUES (?, ?)
 		self.db.execute('DELETE FROM cred_globus')
 		self.db.commit()
 		return
+
+
+@dataclasses.dataclass(
+	frozen=True
+)
+class GlobusCollection:
+	uuid: uuid.UUID
+	name: str
+	server: str
 
 
 async def get_client(
@@ -200,3 +211,67 @@ def needs_login(
 		result = True
 
 	return result
+
+
+def find_collections(
+	client: globus_sdk.TransferClient
+) -> list[GlobusCollection]:
+	"""Return a list of recently-used collections
+
+	:param client: A Globus Transfer client.
+
+	:returns: A list of Globus Collection UUIDs and names.
+	"""
+	debug('Searching for recently-used collections')
+
+	endpoints: list[GlobusEndpoint] = list()
+	search_results = client.endpoint_search(
+		filter_scope='recently-used',
+		limit=10,
+	)
+	for endpoint in search_results:
+		endpoints.push(GlobusEndpoint(
+			uuid = uuid.UUID(endpoint['id']),
+			name = endpoint['display_name'],
+			server = endpoint['DATA'][0]['hostname']
+		))
+
+	debug(f"Found {len(endpoints)} results")
+	return endpoints
+
+
+def get_collection(
+	client: globus_sdk.TransferClient,
+	collection_id: uuid.UUID,
+) -> GlobusCollection:
+	"""Return a Globus Collection name from a UUID.
+
+	This is mainly meant to validate the a UUID is correct.
+
+	:param client: A Globus Transfer client.
+
+	:param collection_id: A Globus Collection UUID.
+
+	:returns: A Globus Collection UUID and name.
+
+	:raise KeyError: The UUID is not a Collection UUID.
+	"""
+	debug(f"Searching for collection {collection_id}")
+
+	# Use the fulltext search for a UUID
+	search_results: Optional[globus_sdk.GlobusHTTPResponse] = None
+	try:
+		search_results = client.get_endpoint(
+			endpoint_id=collection_id,
+		)
+	except globus_sdk.TransferAPIError:
+		pass
+
+	if search_results is not None:
+		return GlobusCollection(
+			uuid = search_results['id'],
+			name = search_results['display_name'],
+			server = search_results['DATA'][0]['hostname']
+		)
+	else:
+		raise KeyError(str(collection_id))
