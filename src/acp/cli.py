@@ -24,7 +24,8 @@ from __future__ import annotations
 import asyncio
 import os
 import sys
-from typing import NoReturn
+from typing import NoReturn, Optional
+import uuid
 
 import acp.db
 import acp.globus
@@ -89,6 +90,65 @@ async def _main():
 	# Say hello
 	print('Hello ' + acp.globus.get_name(g))
 
+	# Get our Globus Transfer client
+	globus_transfer = acp.globus.get_transfer_client(g)
+
+	# Look up collections, and see which one we want to use.
+	collections_list = acp.globus.find_collections(globus_transfer)
+	print('')
+	if len(collections_list) > 0:
+		print('You recently interacted with the following Globus collections:')
+		i = 1
+		for collection in collections_list:
+			print(f"{i}d: {collection.uuid}\n    {collection.name}")
+		print('Which AWS S3 collection would you like to use?')
+
+	# Loop until we have a response
+	collection: Optional[acp.globus.GlobusCollection] = None
+	while collection is None:
+		if len(collections_list) > 0:
+			response = input('Enter a number or a collection UUID:')
+		else:
+			response = input('Please enter the UUID of an AWS S3 collection: ')
+
+		# Test for a number and a UUID
+		response_is_int = False
+		try:
+			response_int = int(response)
+			debug('Response matches an int')
+			response_is_int = True
+		except ValueError:
+			pass
+
+		response_is_uuid = False
+		try:
+			response_uuid = uuid.UUID(response)
+			debug('Response matches a UUID')
+			response_is_uuid = True
+		except ValueError:
+			pass
+
+		# If a UUID, test that it's a collection.
+		if response_is_uuid:
+			try:
+				collection = acp.globus.get_collection(
+					globus_transfer,
+					response_uuid,
+				)
+			except KeyError:
+				print(f"Your UUID, {response_uuid}, is not a Globus collection.")
+
+		# If a number, check if it's in range
+		if response_is_int:
+			# We prompted the user starting at one, so adjust.
+			response_int -= 1
+			if (response_int < 0) or (response_int >= len(collections_list)):
+				print(f"Your selection, {response_int}, was out of range.")
+			else:
+				# It's in range!  Grab the collection info.
+				collection = collections_list[response_int]
+
+	print(f"Using collection \"{collection.name}\"")
 
 # Our actual main!
 def main() -> NoReturn:
