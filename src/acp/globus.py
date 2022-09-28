@@ -135,6 +135,22 @@ async def get_client(
 	)
 
 
+def get_transfer_client(
+	client: fair_research_login.NativeClient
+) -> globus_sdk.TransferClient:
+	"""Return a ready-to-use Globus Transfer client.
+
+	:param client: The native client.
+
+	:returns: A Globus Transfer client.
+	"""
+
+	transfer_client = globus_sdk.TransferClient(
+		authorizer=client.get_authorizers_by_scope()['urn:globus:auth:scope:transfer.api.globus.org:all']
+	)
+	return transfer_client
+
+
 def get_name(
 	client: fair_research_login.NativeClient
 ) -> str:
